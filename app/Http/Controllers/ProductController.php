@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Helpers\ResponseHelper;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -17,7 +18,8 @@ class ProductController extends Controller
     {
         try {
             $helper = new ResponseHelper();
-            $data = Product::all();
+            $data = Product::select("products.name as productName", "categories.name as categoryName", "products.price as productPrice")
+                    ->join('categories', 'products.category_id', '=', 'categories.id')->get();
 
             return $helper->responseMessageData('Product retrieved successfully', $data);
         } catch (\Throwable $th) {
@@ -42,13 +44,16 @@ class ProductController extends Controller
         try {
             $helper = new ResponseHelper();
 
-            $dataValidate = $request->validate([
+
+            $validator = Validator::make($request->all(), [
                 'name' => ['required'],
                 'category_id' => ['required', Rule::exists('categories', 'id')],
                 'price' => ['required', 'numeric']
             ]);
 
-            $data = Product::create($dataValidate);
+            if ($validator->fails()) return $helper->responseError($validator->errors(), 400);
+
+            $data = Product::create($request->all());
 
             return $helper->responseMessageData('Product created successfully', $data);
         } catch (\Throwable $th) {
@@ -90,13 +95,15 @@ class ProductController extends Controller
             $helper = new ResponseHelper();
             $data = Product::find($id);
 
-            $dataValidate = $request->validate([
+            $validator = Validator::make($request->all(), [
                 'name' => ['required'],
                 'category_id' => ['required', Rule::exists('categories', 'id')],
                 'price' => ['required', 'numeric']
             ]);
 
-            $data->update($dataValidate);
+            if ($validator->fails()) return $helper->responseError($validator->errors(), 400);
+
+            $data->update($request->all());
 
             return $helper->responseMessageData('Product updated successfully', $data);
         } catch (\Throwable $th) {

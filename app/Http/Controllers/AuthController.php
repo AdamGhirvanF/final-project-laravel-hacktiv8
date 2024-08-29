@@ -8,15 +8,19 @@ use Illuminate\Support\Facades\Hash;
 use App\Helpers\ResponseHelper;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function login(Request $req){
         $response = new ResponseHelper();
-        $req->validate([
+
+        $validator = Validator::make($req->all(), [
             'email' => 'required|email',
             'password'=> 'required|string|min:6'
         ]);
+
+        if ($validator->fails()) return $response->responseError($validator->errors(), 400);
 
         $credential = $req->only(['email','password']);
 
@@ -39,13 +43,15 @@ class AuthController extends Controller
     public function register(Request $req){
         $response = new ResponseHelper();
 
-        $req->validate([
+        $validator = Validator::make($req->all(), [
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password'=> 'required|string|min:6',
             'address' => 'required'
         ]);
-        
+
+        if ($validator->fails()) if ($validator->fails()) return $response->responseError($validator->errors(), 400);
+
         $data = User::create([
             'name' => $req->name,
             'email'=> $req->email,

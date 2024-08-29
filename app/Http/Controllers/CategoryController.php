@@ -6,6 +6,7 @@ use App\Helpers\ResponseHelper;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -39,11 +40,13 @@ class CategoryController extends Controller
         try {
             $helper = new ResponseHelper();
 
-            $dataValidate = $request->validate([
-                'name' => ['required'],
+            $validator = Validator::make($request->all(), [
+                'name' => 'required'
             ]);
 
-            $data = Category::create($dataValidate);
+            if ($validator->fails()) return $helper->responseError($validator->errors(), 400);
+
+            $data = Category::create($request->all());
 
             return $helper->responseMessageData('Category created successfully', $data);
         } catch (\Throwable $th) {
@@ -85,11 +88,15 @@ class CategoryController extends Controller
             $helper = new ResponseHelper();
             $data = Category::find($id);
 
-            $dataValidate = $request->validate([
-                'name' => ['required']
+            if(empty($data)) return $helper->responseError('Wrong category ID, please check again', 400);
+
+            $validator = Validator::make($request->all(), [
+                'name' => 'required'
             ]);
 
-            $data->update($dataValidate);
+            if ($validator->fails()) return $helper->responseError($validator->errors(), 400);
+
+            $data->update($request->all());
 
             return $helper->responseMessageData('Category updated successfully', $data);
         } catch (\Throwable $th) {
