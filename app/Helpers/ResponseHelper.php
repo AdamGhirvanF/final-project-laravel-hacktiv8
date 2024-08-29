@@ -26,11 +26,11 @@ class ResponseHelper
         ],200);
       }
 
-      public function responseError($message){
+      public function responseError($message, $errCode){
         return response()->json([
           'status' => 'error',
           'message' => $message
-        ],400);
+        ],$errCode);
       }
 
 }

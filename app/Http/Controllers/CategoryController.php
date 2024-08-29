@@ -18,7 +18,7 @@ class CategoryController extends Controller
 
             return $helper->responseMessageData('Category retrieved successfully', $data);
         } catch (\Throwable $th) {
-            return $helper->responseError($th->getMessage());
+            return $helper->responseError($th->getMessage(), 400);
         }
 
     }
@@ -47,7 +47,7 @@ class CategoryController extends Controller
 
             return $helper->responseMessageData('Category created successfully', $data);
         } catch (\Throwable $th) {
-            return $helper->responseError($th->getMessage());
+            return $helper->responseError($th->getMessage(), 400);
         }
     }
 
@@ -60,11 +60,11 @@ class CategoryController extends Controller
             $helper = new ResponseHelper();
             $data = Category::find($id);
 
-            if(empty($data)) return $helper->responseError('Data not found, wrong ID!');
+            if(empty($data)) return $helper->responseError('Data not found, wrong ID!', 404);
 
             return $helper->responseMessageData('Category retrieved successfully', $data);
         } catch (\Throwable $th) {
-            return $helper->responseError($th->getMessage());
+            return $helper->responseError($th->getMessage(), 400);
         }
     }
 
@@ -93,7 +93,7 @@ class CategoryController extends Controller
 
             return $helper->responseMessageData('Category updated successfully', $data);
         } catch (\Throwable $th) {
-            return $helper->responseError($th->getMessage());
+            return $helper->responseError($th->getMessage(), 400);
         }
     }
 
@@ -106,12 +106,12 @@ class CategoryController extends Controller
             $helper = new ResponseHelper();
             $data = Category::find($id);
 
-            if(empty($data)) return $helper->responseError('Category was not found');
+            if(empty($data)) return $helper->responseError('Category was not found', 404);
 
             $data->delete();
             return $helper->responseMessageData('Category deleted successfully', $data);
         } catch (\Throwable $th) {
-            return $helper->responseError($th->getMessage());
+            return $helper->responseError($th->getMessage(), 400);
         }
     }
 }
