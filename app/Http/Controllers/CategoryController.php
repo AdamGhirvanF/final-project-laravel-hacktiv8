@@ -6,6 +6,7 @@ use App\Helpers\ResponseHelper;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -114,6 +115,7 @@ class CategoryController extends Controller
             $data = Category::find($id);
 
             if(empty($data)) return $helper->responseError('Category was not found', 404);
+            if(!empty(Product::where('category_id', $id)->first())) return $helper->responseError('Category can not be deleted since there is product attached to it', 400);
 
             $data->delete();
             return $helper->responseMessageData('Category deleted successfully', $data);

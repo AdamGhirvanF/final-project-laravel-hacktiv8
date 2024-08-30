@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Models\Order;
 use App\Helpers\ResponseHelper;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
@@ -121,6 +122,7 @@ class ProductController extends Controller
             $data = Product::find($id);
 
             if(empty($data)) return $helper->responseError('Product was not found', 404);
+            if(!empty(Order::where('product_id', $id)->first())) return $helper->responseError('Product can not be deleted since there is order attached to it', 400);
 
             $data->delete();
             return $helper->responseMessageData('Product deleted successfully', $data);
