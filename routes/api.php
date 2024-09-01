@@ -11,6 +11,7 @@ use App\Http\Controllers\AuthController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('login', [AuthController::class,'loginFirst'])->name('login');
+Route::get('logout', [AuthController::class,'logout']);
 
 Route::apiResource('category', CategoryController::class);
 Route::apiResource('product', ProductController::class);
