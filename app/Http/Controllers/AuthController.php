@@ -70,7 +70,7 @@ class AuthController extends Controller
 
             return $response->responseMessageData('Success register', $data);
         } catch (\Throwable $th) {
-            return $response->responseError($th->getMessage(), 400);bi
+            return $response->responseError($th->getMessage(), 400);
         }
     }
 
